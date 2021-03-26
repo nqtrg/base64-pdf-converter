@@ -1,8 +1,4 @@
-from io import BytesIO
-import base64
-import json
-import os
-import PyPDF2
+import codecs
 import typer
 
 
@@ -10,23 +6,28 @@ app = typer.Typer()
 
 
 @app.command()
-def encode(file_path: str, output_dir: str = './results'):
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+def decode(file_path: str, output: str = 'results/output.pdf'):
+    """
+    Convert base64 to PDF file
+    """
+    with open(file_path, 'rb') as f:
+        base64bytes = f.read()
 
-    with open(file_path, 'r') as f:
-        pdf_result = f.read()
+    with open(f'{output}', "wb") as f:
+        f.write(codecs.decode(base64bytes, "base64"))
 
-    for i, file_bytes in enumerate(base64.b64decode(pdf_result).split(b'%%EOF')[:-1]):
-        pdf_bytes_io = BytesIO(file_bytes + b'%%EOF')
-        pdf = PyPDF2.PdfFileReader(pdf_bytes_io)
 
-        with open(f'{output_dir}/file_{i}.pdf', 'wb') as f:
-            output = PyPDF2.PdfFileWriter()
-            num_of_pages = pdf.getNumPages()
-            for page_number in range(0, num_of_pages):
-                output.addPage(pdf.getPage(page_number))
-            output.write(f)
+@app.command()
+def encode(file_path: str, output: str = 'results/output.txt'):
+    """
+    Convert PDF file to base64
+    """
+    with open(file_path, 'rb') as f:
+        base64bytes = f.read()
+
+    with open(f'{output}', "wb") as f:
+        f.write(codecs.encode(base64bytes, "base64"))
+
 
 if __name__ == "__main__":
     app()
