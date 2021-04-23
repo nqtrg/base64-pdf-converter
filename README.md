@@ -8,13 +8,18 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-Decode:
+### Decode:
 ```
 python main.py decode ./sample/pdf_to_base64.txt --output results/base64_to_pdf.pdf
 ```
 
 
-Encode:
+### Encode:
 ```
 python main.py encode ./sample/base64_to_pdf.pdf --output results/pdf_to_base64.txt
+```
+
+or you can write to STDOUT and pipe to another tool
+```
+python main.py encode ./sample/base64_to_pdf.pdf | pbcopy
 ```
